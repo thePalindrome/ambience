@@ -21,7 +21,23 @@ local function load_volumes()
     file:close()
 end
 
+local function load_config()
+    -- Load /ambience_music/config and /ambience_sounds/config
+end
+
+local function load_music()
+    music = minetest.get_dir_list(world_path.."/ambience_music", "r")
+end
+
+local function load_sounds()
+    sounds = minetest.get_dir_list(world_path.."/ambience_sounds", "r")
+end
+
+
 load_volumes()
+load_config
+load_music()
+load_sounds()
 
 local function play_music(player,filename)
 	local db = volume[player:get_player_name()]
@@ -73,4 +89,25 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
         end
     end
     return true
+end)
+
+local delay = 0
+minetest.register_globalstep(function(dtime)
+delay += dtime
+if delay < 5 then
+    return
+end
+
+delay = 0
+
+    for _,player in ipairs(minetest.get_connected_players()) do
+
+        if volume[player:get_player_name()].music_handle == nil then -- only play one song at a time
+            -- Pick a song, roll the dice
+        end
+
+        -- Somehow decide on ambient sounds (these can overlap)
+
+    end
+
 end)
