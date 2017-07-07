@@ -2,6 +2,7 @@ print("Ambience 0.0.0 loaded! Wubba lubba dub dub!")
 
 local MUSICVOLUME = 1
 local SOUNDVOLUME = 1
+local storage = minetest.get_mod_storage()
 
 local volume = {}
 local music = {}
@@ -10,15 +11,13 @@ local world_path = minetest.get_worldpath()
 
 
 local function load_volumes()
-    local file, err = io.open(world_path.."/ambience_volumes", "r")
-    if err then
-        return 
-    end
-    for line in file:lines() do
+    local volumes = storage:get_string("volumes")
+    local playerVolumes = string.split(volumes, ";")
+
+    for line in playerVolumes do
         local config_line = string.split(line, ":")
         volume[config_line[1]] = {music=config_line[2],sound=config_line[3]}
     end
-    file:close()
 end
 
 local function load_config()
@@ -35,7 +34,7 @@ end
 
 
 load_volumes()
-load_config
+load_config()
 load_music()
 load_sounds()
 
@@ -74,19 +73,18 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
     if formname ~= "ambience:volume" then
         return false
     end
+    local playerName = player:get_player_name()
     minetest.log(dump(fields))
     if fields.quit ~= "true" then
-        volume[player:get_player_name()].music = tonumber(string.split(fields.music,":")[2]) / 1000
-        volume[player:get_player_name()].sound = tonumber(string.split(fields.sound,":")[2]) / 1000
+        volume[playerName].music = tonumber(string.split(fields.music,":")[2]) / 1000
+        volume[playerName].sound = tonumber(string.split(fields.sound,":")[2]) / 1000
     end
     if fields.quit then
-        local file, err = io.open(world_path.."/ambience_volumes", "w")
-        if not err then
-            for item in pairs(volume) do
-                file:write(item..":"..volume[item].music..":"..volume[item].sound.."\n")
-            end
-            file:close()
+        local volumes = ""
+        for item in pairs(volume) do
+            volumes = volumes .. item .. ":" .. volume[item].music .. ":" .. volume[item].sound .. ";"
         end
+        storage:set_string("volumes",volumes)
     end
     return true
 end)
@@ -100,7 +98,7 @@ end
 
 delay = 0
 
-    for _,player in ipairs(minetest.get_connected_players()) do
+    for _,player in ipairs(minetest.get_connected_players()) do -- do I want to determine playable songs now or just validate random ones?
 
         if volume[player:get_player_name()].music_handle == nil then -- only play one song at a time
             -- Pick a song, roll the dice
