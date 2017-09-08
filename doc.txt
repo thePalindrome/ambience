@@ -1,0 +1,33 @@
+Music is defined as any track meant to be more than a few seconds long and
+will be the only music playing.
+A Sound is defined as a short snippet (examples include some chirping birds)
+
+Any file found in $WORLDPATH/ambience_music/config will be assumed to be a
+config file for music, the same applies to $WORLDPATH/ambience_sound for sound
+configs. This allows Game authors and Server operators to easily add or adjust
+sounds.
+
+Config files are written as json, with each block referring to a single track.
+The "file" field is required and must be filled with the name (minus
+extension) of the audio file to be played. The "name" field can be provided
+for a more nicely formatted name of the track ( "High by Blackavar" as opposed
+    to "high")
+
+The "conditions" field is required and is filled with an array of objects
+containing the conditions. All conditions must be filled before the sound
+will play. conditions are required to have the field "type" detailing the type
+of requirement (e.g. "biome") as well as a "val" field containing the
+triggering value. Certain conditions (such as "posX") require a third field
+named "operation" dictating if "val" is to be interpreted as "Trigger if less
+than val" or "trigger if greater than." If "Val2" is set, the trigger will be
+defined as "between val and val2," such as with the "time" condition.
+The available conditions are as follows:
+
+posX, posY, posZ:
+These compare the player's position in their respective co-ordinates
+
+time:
+Compares the current time to val and val2
+
+canSeeSky:
+Can the player see the sky
