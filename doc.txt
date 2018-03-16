@@ -23,6 +23,9 @@ than val" or "trigger if greater than." If "Val2" is set, the trigger will be
 defined as "between val and val2," such as with the "time" condition.
 The available conditions are as follows:
 
+biome_id, biome_heat, biome_humidity:
+Determined by the position of the player
+
 posX, posY, posZ:
 These compare the player's position in their respective co-ordinates
 
