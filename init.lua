@@ -8,7 +8,7 @@ local volume = {}
 local music = {}
 local music_config = {}
 local sounds = {}
-local world_path = minetest.get_worldpath()
+local world_path = minetest.get_modpath("ambience")
 
 
 local function load_volumes()
@@ -26,24 +26,22 @@ end
 
 local function load_config()
     -- Load /ambience_music/config and /ambience_sounds/config
-    local sounds_config_raw = minetest.get_dir_list(world_path.."/ambience_sounds/config/", false)
-    for v,i in pairs(minetest.get_dir_list(world_path.."/ambience_music/config/", false)) do
-        print(world_path.."/ambience_music/config/"..i)
-        local f = io.open(world_path.."/ambience_music/config/"..i, "r")
+    for v,i in pairs(minetest.get_dir_list(world_path.."/sounds/config/", false)) do
+        local f = io.open(world_path.."/sounds/config/"..i, "r")
         local c = f:read("*a")
         music_config[i] = minetest.parse_json(c)
     end
 end
 
 local function load_music()
-    music = minetest.get_dir_list(world_path.."/ambience_music", false)
+    music = minetest.get_dir_list(world_path.."/sounds", false)
     for i,v in pairs(music) do
         music[i] = string.split(v,".")[1] -- Strip the extension
     end
 end
 
 local function load_sounds()
-    sounds = minetest.get_dir_list(world_path.."/ambience_sounds", false)
+    --sounds = minetest.get_dir_list(world_path.."/ambience_sounds", false)
 end
 
 local function can_play(name, player)
@@ -51,6 +49,17 @@ local function can_play(name, player)
         return false
     end
     local foo = music_config[name].conditions
+    for _,i in pairs(foo) do
+        if i.type == "biome" then
+            local b = minetest.get_biome_name(minetest.get_biome_data(player:getpos()).biome)
+            if i.val == "ocean" then
+
+            end
+            if i.val ~= b then
+                return false
+            end
+        end
+    end
     return true
 end
 
@@ -132,7 +141,7 @@ delay = 0
         if volume[player:get_player_name()].music_handle == nil then -- only play one song at a time
             -- Pick a song, roll the dice
             for _,i in ipairs(music) do -- Let's determine availability, then apply randomness
-                if can_play(i,player) and math.random(10) == 5 then
+                if can_play(i,player) and math.random(2) == 1 then
                     print(i)
                     local p_name = player:get_player_name()
                     volume[p_name].music_handle = minetest.sound_play(i,{gain= volume[p_name].music, to_player=p_name})

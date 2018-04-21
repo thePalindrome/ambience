@@ -2,6 +2,6 @@
     "file":"ocean",
     "name":"Blackavar - Ocean",
     "conditions":[
-        {"type":"biome_id","val":"ocean"}
+        {"type":"biome","val":"ocean"}
     ]
 }
