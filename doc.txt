@@ -24,7 +24,9 @@ defined as "between val and val2," such as with the "time" condition.
 The available conditions are as follows:
 
 biome_id, biome_heat, biome_humidity:
-Determined by the position of the player
+Determined by the position of the player. Note that biome_id has a few
+"special" cases due to oddities. i.e. "ocean" refers to *any* ocean biome, and
+"forest" refers to deciduous and coniferous forests.
 
 posX, posY, posZ:
 These compare the player's position in their respective co-ordinates
